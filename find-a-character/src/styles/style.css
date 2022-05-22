@@ -64,3 +64,19 @@ table {
 .gameboard-image-container {
 	cursor: cell;
 }
+
+#divine-comedy {
+	height: 1000px;
+}
+
+#the-dutch-proverbs {
+	height: 1500px;
+}
+
+#robo-city {
+	width: 100%;
+}
+
+#universe-113 {
+	width: 100%;
+}

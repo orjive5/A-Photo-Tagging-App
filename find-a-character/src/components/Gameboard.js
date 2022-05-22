@@ -1,34 +1,56 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const Gameboard = (props) => {
 
     const location = useLocation();
-    const {id, title, author, src} = location.state;
+    const {id, title, author, src, displayId, characters} = location.state;
 
-    const checkCoordinates = (event) => {
-        let x = event.nativeEvent.offsetX;
-        let y = event.nativeEvent.offsetY;
-        console.log(`X: ${x}, Y: ${y}`)
+    function between(x, min, max) {
+        return x >= min && x <= max;
     }
+    const divineComedyCharacters = {BruceLee: false, MarilynMonroe: false, AlbertEinstein: false}
 
-    const checkBruceLee = (event) => {
-        // let x1 = props.character.BruceLee.x1;
-        // let x2 = props.character.BruceLee.x2;
-        // let y1 = props.character.BruceLee.y1;
-        // let y2 = props.character.BruceLee.y2;
-        // let coordinateX = event.nativeEvent.offsetX;
-        // let coordinateY = event.nativeEvent.offsetY;
-        console.log(props.character.BruceLee)
-        // console.log(x1)
-        // console.log(x2)
-        // console.log(y1)
-        // console.log(y2)
-        // if (coordinateX >= x1 && coordinateX <= x2 ){
-        //     console.log('x is correct')
-        // } else {
-        //     console.log('x not correct')
-        // }
+    const [findCharacter, setFindCharacter] = useState(divineComedyCharacters);
+
+    useEffect(() => {
+        let checkTruth = []
+        for (const key in findCharacter) {
+            checkTruth.push(findCharacter[key])
+        }
+        if (checkTruth.every(element => element === true)) {
+            console.log('game won')
+        }
+    }, [findCharacter]);
+
+    const checkCharacters = (e) => {
+        let coordinateX = e.nativeEvent.offsetX;
+        let coordinateY = e.nativeEvent.offsetY;
+        console.log(coordinateX);
+        console.log(coordinateY);
+        console.log(characters);
+        if (between(coordinateX, characters.BruceLee.x1, characters.BruceLee.x2) && between(coordinateY, characters.BruceLee.y1, characters.BruceLee.y2)) {
+            setFindCharacter(prevFindCharacter => {
+                return {
+                    ...prevFindCharacter,
+                    BruceLee: true,
+                }
+            })
+        } else if (between(coordinateX, characters.MarilynMonroe.x1, characters.MarilynMonroe.x2) && between(coordinateY, characters.MarilynMonroe.y1, characters.MarilynMonroe.y2)) {
+            setFindCharacter(prevFindCharacter => {
+                return {
+                    ...prevFindCharacter,
+                    MarilynMonroe: true,
+                }
+            })
+        } else if (between(coordinateX, characters.AlbertEinstein.x1, characters.AlbertEinstein.x2) && between(coordinateY, characters.AlbertEinstein.y1, characters.AlbertEinstein.y2)) {
+            setFindCharacter(prevFindCharacter => {
+                return {
+                    ...prevFindCharacter,
+                    AlbertEinstein: true,
+                }
+            })
+        }
     }
 
     return (
@@ -41,8 +63,8 @@ const Gameboard = (props) => {
                     <button>Gameover</button>
                 </Link>
             </header>
-            <div className="gameboard-image-container" onClick={checkBruceLee}>
-                <img src={src} className='gameboard-image'/>
+            <div className="gameboard-image-container" onClick={checkCharacters}>
+                <img src={src} className='gameboard-image' id={displayId} alt='' />
             </div>
         </div>
     );
