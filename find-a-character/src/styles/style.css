@@ -80,3 +80,25 @@ table {
 #universe-113 {
 	width: 100%;
 }
+
+.select-character-box {
+	background-color: white;
+	opacity: 0.8;
+	border-radius: 10px;
+	position: absolute;
+	top: 83px;
+	left: 83px;
+	overflow: hidden;
+}
+
+.select-character-box:hover {
+	cursor: pointer;
+}
+
+.character-name {
+	padding: 10px;
+}
+
+.character-name:hover {
+	background-color: aqua;
+}

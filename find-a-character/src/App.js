@@ -1,9 +1,26 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 import cardData from './components/cardData'
 import Card from './components/Card'
+// import { app, database } from './firebaseConfig'
+// import { collection, getDocs } from 'firebase/firestore'
 
 function App() {
+
+  // const collectionRef = collection(database, 'paintings');
+
+  // const getData = () => {
+  //   getDocs(collectionRef)
+  //     .then((response) => {
+  //     console.log(
+  //       response.docs.map((item) => {
+  //         return { ...item.data(), id: item.id };
+  //       })
+  //     );
+  //   });
+  // }
+
+  // getData();
 
   const [data, setData] = useState(cardData);
 
