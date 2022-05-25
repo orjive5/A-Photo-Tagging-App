@@ -102,3 +102,17 @@ table {
 .character-name:hover {
 	background-color: aqua;
 }
+
+.divine-comedy header {
+	position: fixed;
+	top: 30px;
+	left: 30px;
+	color: white;
+	display: flex;
+	gap: 30px;
+}
+
+.left-to-find {
+	display: flex;
+	gap: 15px;
+}
