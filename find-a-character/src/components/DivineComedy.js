@@ -140,6 +140,107 @@ const DivineComedy = () => {
         }
     }
 
+    // useEffect(() => {
+        // let topScoresData = divineComedyData.topScores;
+    //     let topTenScores = [];
+    // for (const item in topScoresData) {
+    //         console.log(topScoresData[item])
+    //         topTenScores.push(topScoresData[item].score)
+    //     }
+    //     console.log(topTenScores);
+    //     console.log(`${username} scored ${score}`)
+    // }, [score])
+
+
+    let topScoresData = divineComedyData.topScores;
+    let topTenScores = [];
+    for (const item in topScoresData) {
+        topTenScores.push(topScoresData[item])
+    }
+    // console.log(topTenScores);
+    // console.log(topTenScores.some(element => element.score < score));
+
+    useEffect(() => {
+        console.log(topTenScores);
+        // console.log(score);
+        let indexToChange;
+        if (topTenScores.some(element => element.score >= score)) {
+            console.log('we have top score')
+            for (const item of topTenScores) {
+                // if (score >= item.score) {
+                //     console.log(topTenScores.indexOf(item))
+                // }
+                if (score !== 0 && score <= item.score) {
+                    indexToChange = topTenScores.indexOf(item);
+                    console.log(indexToChange);
+                    topTenScores.splice(indexToChange, 0, { score: score, user: username });
+                    topTenScores.pop();
+                    console.log(topTenScores);
+                    break;
+                }
+            }
+
+            // if (score !== 0) {
+                updateDoc(divineComedyRef, {
+                    'topScores.1': topTenScores[0],
+                    'topScores.2': topTenScores[1],
+                    'topScores.3': topTenScores[2],
+                    'topScores.4': topTenScores[3],
+                    'topScores.5': topTenScores[4],
+                    'topScores.6': topTenScores[5],
+                    'topScores.7': topTenScores[6],
+                    'topScores.8': topTenScores[7],
+                    'topScores.9': topTenScores[8],
+                    'topScores.10': topTenScores[9],
+                })
+            // }
+
+            // const userToChange = `topScores.${indexToChange}.user`
+            // const scoreToChange = `topScores.${indexToChange}.score`
+
+            // if (score !== 0) {
+            //     if (username === '') {
+            //         updateDoc(divineComedyRef, {
+            //             [userToChange]: 'Player',
+            //             [scoreToChange]: score,
+            //         })
+            //     } else {
+            //         updateDoc(divineComedyRef, {
+            //             [userToChange]: username,
+            //             [scoreToChange]: score,
+            //         })
+            //     }
+            // }
+            // updateDoc(divineComedyRef, {
+            //     'characters.BruceLee.found': false,
+            //         )
+        } else {
+            console.log('try again!')
+        }
+    }, [score])
+
+            // if (score <= element.score){
+        //     console.log('we have top score')
+        //     console.log(element.score)
+        //     console.log(score)
+        // }
+
+    const displayTopScores = topTenScores.map((element, index) => {
+        // if (score <= element.score){
+        //     console.log('we have top score')
+        //     console.log(element.score)
+        //     console.log(score)
+        // }
+        return (
+            <div className="top-score">
+                <h1>
+                    {index + 1}. {element.user}: {("0" + Math.floor(( element.score / 60000) % 60)).slice(-2)}:
+                    {("0" + Math.floor(( element.score / 1000) % 60)).slice(-2)}
+                </h1>
+            </div>
+        )
+    })
+
     const displayNames = characterNames.map(element => {
             return (
                 <div className="character-name" onClick={selectCharacter} key={nanoid()} >
@@ -238,7 +339,7 @@ const DivineComedy = () => {
         document.body.classList.remove('active-start-popup')
     }
 
-    const [username, setUsername] = useState('');
+    const [username, setUsername] = useState('Player');
 
     function handleUsername(e) {
         setUsername(e.target.value)
@@ -274,10 +375,14 @@ const DivineComedy = () => {
                     <div className="overlay"></div>
                     <div className="play-again-popup-content">
                         <h1>YOUR SCORE</h1>
-                        <h2>{("0" + Math.floor(( score  / 60000) % 60)).slice(-2)}:
+                        <h1>{username}</h1>
+                        <h2>
+                            {("0" + Math.floor((score / 60000) % 60)).slice(-2)}:
                             {("0" + Math.floor(( score / 1000) % 60)).slice(-2)}
                         </h2>
                         <button onClick={handlePlayAgain}>PLAY AGAIN</button>
+                        <h1>TOP SCORES:</h1>
+                        {displayTopScores}
                     </div>
                 </div>
             )}
