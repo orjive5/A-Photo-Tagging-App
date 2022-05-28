@@ -1,10 +1,22 @@
-import React, { useState } from 'react'
-import cardData from './components/cardData'
+import React, { useEffect, useState } from 'react'
 import Card from './components/Card'
+import { collection, doc, getDocs } from "firebase/firestore";
+import { app, database } from './firebaseConfig'
 
 function App() {
 
-  const [data, setData] = useState(cardData);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+
+    const querySnapshot = async () => {
+      const getData = await getDocs(collection(database, 'paintings'));
+      setData(getData.docs.map(doc => doc.data()));
+    }
+
+    querySnapshot();
+
+  }, [])
 
   const displayCards = data.map(element => {
     return (

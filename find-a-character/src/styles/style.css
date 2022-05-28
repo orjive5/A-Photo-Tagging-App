@@ -159,3 +159,12 @@ play-again-popup,
 	min-width: 300px;
 	z-index: 1;
 }
+
+.error-feedback {
+	position: fixed;
+	top: 30px;
+	right: 700px;
+	padding: 15px 30px;
+	border-radius: 7px;
+	background-color: rgba(204, 0, 0, 0.7);
+}

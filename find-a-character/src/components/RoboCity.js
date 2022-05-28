@@ -1,19 +1,19 @@
-import React from "react";
-import cardData from "./cardData";
+// import React from "react";
+// import cardData from "./cardData";
 
 
-const RoboCity = () => {
+// const RoboCity = () => {
 
-    const roboCityInfo = cardData[2];
+//     const roboCityInfo = cardData[2];
 
-    return (
-        <div className="divine-comedy">
-            <div className="gameboard-image-container">
-                <img src={roboCityInfo.src} id={roboCityInfo.displayId} alt='' />
-            </div>
-        </div>
-    )
+//     return (
+//         <div className="divine-comedy">
+//             <div className="gameboard-image-container">
+//                 <img src={roboCityInfo.src} id={roboCityInfo.displayId} alt='' />
+//             </div>
+//         </div>
+//     )
 
-}
+// }
 
-export default RoboCity;
+// export default RoboCity;

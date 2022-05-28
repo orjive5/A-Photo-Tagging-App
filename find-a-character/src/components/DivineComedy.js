@@ -1,19 +1,19 @@
-import React, {useState, useEffect} from "react";
-import { app, database } from '../firebaseConfig'
+import React, { useState, useEffect } from "react";
+import { database } from '../firebaseConfig'
 import {
-    collection,
-    getDocs,
     getDoc,
     doc,
     updateDoc,
-    deleteDoc,
-    addDoc,
     onSnapshot,
 } from 'firebase/firestore'
 import { nanoid } from 'nanoid'
-import Timer from "./Timer";
+import StartPopup from "./StartPopup";
+import PlayAgainPopup from "./PlayAgainPopup";
+import Header from "./Header";
 
 const DivineComedy = () => {
+
+    //GET THE DATA FROM FIRESTORE AND SET THE DATA STATE
 
     const [divineComedyData, setDivineComedyData] = useState({});
     const divineComedyRef = doc(database, 'paintings', 'C6Zh8R0Fk1pfuqq2z9jg');
@@ -33,12 +33,29 @@ const DivineComedy = () => {
         
     }, [])
 
+    //RESET DATA VALUES WHEN THE PAGE IS RELOADED
+
+    window.onload = () => {
+        updateDoc(divineComedyRef, {
+            'characters.BruceLee.found': false,
+            'characters.AlbertEinstein.found': false,
+            'characters.MarilynMonroe.found': false,
+            'characters.MarieCurie.found': false,
+            'characters.WilliamShakespeare.found': false,
+        })
+    }
+
+    //INITIALIZE AND SET: TARGET BOX, CORRECT GUESS AND ERROR FEEDBACK STATES
+
     const [targetBox, setTargetBox] = useState(false);
 
     const [targetBoxPosition, setTargetBoxPosition] = useState({ x: 0, y: 0 });
 
     const [correctGuess, setCorrectGuess] = useState([]);
+
+    const [errorFeedback, setErrorFeedback] = useState(false);
     
+    //TOGGLE THE TARGET BOX TO TRY AND GUESS A CHARACTER
 
     const checkCharacters = (e) => {
 
@@ -47,26 +64,25 @@ const DivineComedy = () => {
         setTargetBoxPosition({ x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY });
     }
 
-    let items = [];
-    for (const item in divineComedyData) {
-        if (item === 'characters') {
-                items.push(divineComedyData[item])
-            }
-    }
-    let characterData = items[0];
+    //HELPER VARIABLE - CHARACTER DATA - FOR CLEANER CODE
 
-    function between(x, min, max) {
-        return x >= min && x <= max;
-    }
+    let characterData = divineComedyData.characters;
+
+    //HELPER FUNCTION TO CHECK IF NUMBER IS IN SPECIFIC RANGE
+
+    const between = (x, min, max) => x >= min && x <= max;
+
+    //AFTER TARGET BOX IS OPENED, SELECT A CHARACTER TO TRY AND GUESS IT
 
     const selectCharacter = (e) => {
 
         const characterName = e.target.textContent;
 
         for (const person in characterData) {
+
             if (characterData[person].characterName === characterName) {
-                if (
-                    between(
+                
+                if (between(
                         targetBoxPosition.x,
                         characterData[person].x1,
                         characterData[person].x2
@@ -76,24 +92,32 @@ const DivineComedy = () => {
                         characterData[person].y1,
                         characterData[person].y2
                     )) {
-                    console.log(`${characterName} is found!`)
+                    
                     setCorrectGuess(prevCorrectGuess => {
                         return (
-                        [
-                            ...prevCorrectGuess,
-                            {x: targetBoxPosition.x, y: targetBoxPosition.y, character: characterName}
+                            [
+                                ...prevCorrectGuess,
+                                { x: targetBoxPosition.x, y: targetBoxPosition.y, character: characterName }
                             ]
                         )
-                    })
+                    });
+
                     const characterToUpdate = `characters.${person}.found`;
+
                     updateDoc(divineComedyRef, {
                         [characterToUpdate]: true
                     })
+
+                } else {
+                    setErrorFeedback(true);
+                    setTimeout(() => setErrorFeedback(false), 3000)
                 }
             }
         }
 
     }
+
+    //USE onSnapshot TO MAKE CHANGES IN REAL TIME
 
     useEffect(() => {
         onSnapshot(doc(database, 'paintings', 'C6Zh8R0Fk1pfuqq2z9jg'), (doc) => {
@@ -101,21 +125,26 @@ const DivineComedy = () => {
         })
     }, [])
 
+    //INITIALIZE SCORE STATE
+
     const [score, setScore] = useState(0);
 
+    //CHECK IF EVERY CHARACTER IS FOUND AND RESET THE DATA IF TRUE
+
     useEffect(() => {
+
         let found = [];
-        let update = [];
-            for (const item in characterData) {
-                found.push(characterData[item].found);
-                update.push(item)
-            }
+        let update = {};
+
+        for (const item in characterData) {
+            found.push(characterData[item].found);
+            let updateKey = `characters.${item}.found`
+            update[updateKey] = false;
+        }
         
         if (found.length > 0 && found.every(element => element === true)) {
 
             setScore(time);
-
-            console.log('all found')
 
             setCorrectGuess([]);
 
@@ -123,114 +152,56 @@ const DivineComedy = () => {
 
             togglePlayAgainPopup();
 
-            updateDoc(divineComedyRef, {
-                    'characters.BruceLee.found': false,
-                    'characters.AlbertEinstein.found': false,
-                    'characters.MarilynMonroe.found': false,
-                    'characters.MarieCurie.found': false,
-                    'characters.WilliamShakespeare.found': false,
-            })
+            updateDoc(divineComedyRef, update);
+
         }
     }, [divineComedyData])
 
-    let characterNames = []
-    for (const item in characterData) {
-        if (!characterData[item].found) {
-            characterNames.push(characterData[item].characterName)
-        }
-    }
-
-    // useEffect(() => {
-        // let topScoresData = divineComedyData.topScores;
-    //     let topTenScores = [];
-    // for (const item in topScoresData) {
-    //         console.log(topScoresData[item])
-    //         topTenScores.push(topScoresData[item].score)
-    //     }
-    //     console.log(topTenScores);
-    //     console.log(`${username} scored ${score}`)
-    // }, [score])
-
+    //HELPER VARIABLES - TOP SCORES - FOR CLEANER CODE
 
     let topScoresData = divineComedyData.topScores;
     let topTenScores = [];
     for (const item in topScoresData) {
         topTenScores.push(topScoresData[item])
     }
-    // console.log(topTenScores);
-    // console.log(topTenScores.some(element => element.score < score));
+
+    //CHECK IF A PLAYER HAS A TOP SCORE AND UPDATE THE DATA IF TRUE
 
     useEffect(() => {
-        console.log(topTenScores);
-        // console.log(score);
+
         let indexToChange;
+
         if (topTenScores.some(element => element.score >= score)) {
-            console.log('we have top score')
+
             for (const item of topTenScores) {
-                // if (score >= item.score) {
-                //     console.log(topTenScores.indexOf(item))
-                // }
                 if (score !== 0 && score <= item.score) {
                     indexToChange = topTenScores.indexOf(item);
-                    console.log(indexToChange);
-                    topTenScores.splice(indexToChange, 0, { score: score, user: username });
+                    topTenScores.splice(
+                        indexToChange,
+                        0,
+                        { score: score, user: username }
+                    );
                     topTenScores.pop();
-                    console.log(topTenScores);
                     break;
                 }
             }
 
-            // if (score !== 0) {
-                updateDoc(divineComedyRef, {
-                    'topScores.1': topTenScores[0],
-                    'topScores.2': topTenScores[1],
-                    'topScores.3': topTenScores[2],
-                    'topScores.4': topTenScores[3],
-                    'topScores.5': topTenScores[4],
-                    'topScores.6': topTenScores[5],
-                    'topScores.7': topTenScores[6],
-                    'topScores.8': topTenScores[7],
-                    'topScores.9': topTenScores[8],
-                    'topScores.10': topTenScores[9],
-                })
-            // }
+            let updateTopScores = {};
 
-            // const userToChange = `topScores.${indexToChange}.user`
-            // const scoreToChange = `topScores.${indexToChange}.score`
+            for (let i = 0; i < 10; i++){
+                let topScoresKey = `topScores.${i+1}`
+                updateTopScores[topScoresKey] = topTenScores[i]
+            }
 
-            // if (score !== 0) {
-            //     if (username === '') {
-            //         updateDoc(divineComedyRef, {
-            //             [userToChange]: 'Player',
-            //             [scoreToChange]: score,
-            //         })
-            //     } else {
-            //         updateDoc(divineComedyRef, {
-            //             [userToChange]: username,
-            //             [scoreToChange]: score,
-            //         })
-            //     }
-            // }
-            // updateDoc(divineComedyRef, {
-            //     'characters.BruceLee.found': false,
-            //         )
-        } else {
-            console.log('try again!')
+            updateDoc(divineComedyRef, updateTopScores)
+
         }
     }, [score])
 
-            // if (score <= element.score){
-        //     console.log('we have top score')
-        //     console.log(element.score)
-        //     console.log(score)
-        // }
+    //LOOP THROUGH TOP SCORES AND DISPLAY THEM, BUT CONVERT MILLISECONDS TO SECONDS
 
     const displayTopScores = topTenScores.map((element, index) => {
-        // if (score <= element.score){
-        //     console.log('we have top score')
-        //     console.log(element.score)
-        //     console.log(score)
-        // }
+
         return (
             <div className="top-score">
                 <h1>
@@ -239,23 +210,39 @@ const DivineComedy = () => {
                 </h1>
             </div>
         )
+
     })
 
+    //HELPER VARIABLES - CHARACTER NAMES - FOR CLEANER CODE
+
+    let characterNames = []
+    for (const item in characterData) {
+        if (!characterData[item].found) {
+            characterNames.push(characterData[item].characterName)
+        }
+    }
+
+    //LOOP THROUGH CHARACTER NAMES TO DISPLAY THEM
+
     const displayNames = characterNames.map(element => {
-            return (
-                <div className="character-name" onClick={selectCharacter} key={nanoid()} >
-                    <h1>{element}</h1>
-                </div>
-            )
+        return (
+            <div className="character-name" onClick={selectCharacter} key={nanoid()} >
+                <h1>{element}</h1>
+            </div>
+        )
     })
+
+    //LOOP THROUGH CHARACTER NAMES TO DISPLAY CHARACTERS WHICH ARE LEFT TO FIND
     
     const leftToFind = characterNames.map(element => {
-            return (
-                <div className="characters-left-to-find" key={nanoid()} >
-                    <h1>{element}</h1>
-                </div>
-            )
-    })
+        return (
+            <div className="characters-left-to-find" key={nanoid()} >
+                <h1>{element}</h1>
+            </div>
+        )
+    });
+
+    //ADD TARGET BOX AND CORRECT GUESS STYLES HERE BECAUSE OF DYNAMICALLY CHANGING VALUES
 
     const targetBoxStyle = {
         borderRadius: '50%',
@@ -264,14 +251,14 @@ const DivineComedy = () => {
         height: '100px',
         top: `${targetBoxPosition.y - 50}px`,
         left: `${targetBoxPosition.x - 50}px`,
-       backdropFilter: 'brightness(130%)'
+        backdropFilter: 'brightness(130%)'
     }
 
     const displayCorrectGuess = correctGuess.map(element => {
 
         const correctGuessStyle = {
             borderRadius: '50%',
-            border: '2px solid #FFD700',
+            border: '2px solid #00FF00',
             position: 'absolute',
             width: '100px',
             height: '100px',
@@ -314,10 +301,6 @@ const DivineComedy = () => {
     const handleStartTime = () => {
 	    setTimeIsActive(true);
 	    setTimeIsPaused(false);
-    };
-
-    const handlePauseResumeTime = () => {
-	    setTimeIsPaused(!timeIsPaused);
     };
 
     const handleResetTime = () => {
@@ -370,50 +353,27 @@ const DivineComedy = () => {
 
     return (
         <div className="divine-comedy">
-            {playAgainPopup && (
-                <div className="play-again-popup">
-                    <div className="overlay"></div>
-                    <div className="play-again-popup-content">
-                        <h1>YOUR SCORE</h1>
-                        <h1>{username}</h1>
-                        <h2>
-                            {("0" + Math.floor((score / 60000) % 60)).slice(-2)}:
-                            {("0" + Math.floor(( score / 1000) % 60)).slice(-2)}
-                        </h2>
-                        <button onClick={handlePlayAgain}>PLAY AGAIN</button>
-                        <h1>TOP SCORES:</h1>
-                        {displayTopScores}
-                    </div>
+            {errorFeedback && (
+                <div className="error-feedback">
+                    <h1>TRY AGAIN!</h1>
                 </div>
             )}
-            {startPopup && (
-                <div className="start-popup">
-                    <div className="overlay"></div>
-                    <div className="start-popup-content">
-                        <label htmlFor='enter-your-name'>ENTER YOUR NAME</label>
-                        <input type='text' placeholder="Your name" id='enter-your-name' onChange={handleUsername}></input>
-                        <h1>YOUR TASK IS TO FIND:</h1>
-                        {leftToFind}
-                        <button onClick={handleStartGame}>START GAME</button>
-                    </div>
-                </div>
-            )}
-            <header>
-                <div>
-                    <h1>FIND A CHARACTER</h1>
-                    <h2>{username}</h2>
-                </div>
-                <div className="left-to-find">
-                    <h1>Left to find:</h1>
-                    {leftToFind}
-                </div>
-                <div>
-                    Time:
-                    	<div className="stop-watch">
-	                        <Timer time={time} />
-	                    </div>
-                </div>
-            </header>
+            {playAgainPopup && <PlayAgainPopup
+                username={username}
+                score={score}
+                handlePlayAgain={handlePlayAgain}
+                displayTopScores={displayTopScores}
+            />}
+            {startPopup && <StartPopup
+                handleUsername={handleUsername}
+                leftToFind={leftToFind}
+                handleStartGame={handleStartGame}
+            />}
+            <Header
+                username={username}
+                leftToFind={leftToFind}
+                time={time}
+            />
             {displayCorrectGuess}
             {
                 targetBox &&
