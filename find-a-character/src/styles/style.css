@@ -73,14 +73,6 @@ table {
 	height: 1500px;
 }
 
-#robo-city {
-	width: 100%;
-}
-
-#universe-113 {
-	width: 100%;
-}
-
 .select-character-box {
 	background-color: white;
 	opacity: 0.8;
@@ -103,7 +95,8 @@ table {
 	background-color: aqua;
 }
 
-.divine-comedy header {
+.divine-comedy header,
+.the-dutch-proverbs header {
 	position: fixed;
 	top: 30px;
 	left: 30px;
@@ -120,7 +113,7 @@ table {
 	gap: 15px;
 }
 
-/* MODAL STYLE */
+/* POPUP STYLE */
 
 body.active-start-popup,
 body.active-play-again-popup {

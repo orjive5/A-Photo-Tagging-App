@@ -11,7 +11,12 @@ function App() {
 
     const querySnapshot = async () => {
       const getData = await getDocs(collection(database, 'paintings'));
-      setData(getData.docs.map(doc => doc.data()));
+      setData(getData.docs.map(doc => {
+        return {
+          ...doc.data(),
+          paintingId: doc.id,
+        }
+      }));
     }
 
     querySnapshot();
@@ -21,12 +26,13 @@ function App() {
   const displayCards = data.map(element => {
     return (
       <Card
-            to={element.to}
-            key={element.id}
-            id={element.id}
-            title={element.title}
-            author={element.author}
-            src={element.src}
+          to={element.to}
+          key={element.id}
+          id={element.id}
+          title={element.title}
+          author={element.author}
+          src={element.src}
+          paintingId={element.paintingId}
          />
     )
   })
