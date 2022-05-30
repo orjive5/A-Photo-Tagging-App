@@ -10,10 +10,12 @@ const StartPopup = (props) => {
                 <input type='text' placeholder="Your name" id='enter-your-name' onChange={props.handleUsername}></input>
                 <h1>YOUR TASK IS TO FIND:</h1>
                 {props.leftToFind}
-                <button onClick={props.handleStartGame}>START GAME</button>
-                <Link to='/'>
-                    <button>HOME</button>
-                </Link>
+                <div className="gameboard-buttons">
+                    <button onClick={props.handleStartGame}>START GAME</button>
+                    <Link to='/'>
+                        <button>HOME</button>
+                    </Link>
+                </div>
             </div>
         </div>
     )

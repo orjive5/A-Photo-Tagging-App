@@ -40,7 +40,7 @@ function App() {
   return (
     <div className="app">
       <header>
-        <h1>FIND A DETAIL</h1>
+        <h1>FIND A CHARACTER</h1>
       </header>
       <h1>SELECT YOUR GAME:</h1>
       <div className='display-cards'>

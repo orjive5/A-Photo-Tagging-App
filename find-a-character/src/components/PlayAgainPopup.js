@@ -12,10 +12,12 @@ const PlayAgainPopup = (props) => {
                     {("0" + Math.floor((props.score / 60000) % 60)).slice(-2)}:
                     {("0" + Math.floor(( props.score / 1000) % 60)).slice(-2)}
                 </h2>
-                <button onClick={props.handlePlayAgain}>PLAY AGAIN</button>
-                <Link to='/'>
-                    <button>HOME</button>
-                </Link>
+                <div className="gameboard-buttons">
+                    <button onClick={props.handlePlayAgain}>PLAY AGAIN</button>
+                    <Link to='/'>
+                        <button>HOME</button>
+                    </Link>
+                </div>
                 <h1>TOP SCORES:</h1>
                 {props.displayTopScores}
             </div>

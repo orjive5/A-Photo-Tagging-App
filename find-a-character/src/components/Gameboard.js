@@ -55,21 +55,6 @@ const Gameboard = ({history}) => {
 
     });
 
-    //RESET DATA ON ROUTE CHANGE
-
-      useEffect(() => {
-        let update = {};
-
-        for (const item in characterData) {
-            let updateKey = `characters.${item}.found`
-            update[updateKey] = false;
-        }
-
-        updateDoc(paintingRef, update)
-          console.log('route changed')
-          
-    },[location.pathname, characterData, paintingRef]);
-
     //INITIALIZE AND SET: TARGET BOX, CORRECT GUESS AND ERROR FEEDBACK STATES
 
     const [targetBox, setTargetBox] = useState(false);
@@ -347,6 +332,20 @@ const Gameboard = ({history}) => {
         document.body.classList.remove('active-start-popup')
     }
 
+    //If StartPopup true - reset data
+
+    if (startPopup) {
+        let update = {};
+
+        for (const item in characterData) {
+            let updateKey = `characters.${item}.found`
+            update[updateKey] = false;
+        }
+
+        updateDoc(paintingRef, update);
+
+    }
+
     const [username, setUsername] = useState('Player');
 
     function handleUsername(e) {
@@ -375,6 +374,48 @@ const Gameboard = ({history}) => {
         togglePlayAgainPopup();
         handleStartTime();
     }
+
+    const [selectBoxOffset, setSelectBoxOffset] = useState({top: 83, left: 83});
+
+    useEffect(() => {
+        const selectDiv = document.querySelector('.select-character-box');
+        const imageFeatured = document.querySelector(`#${paintingData.displayId}`);
+        if (selectDiv !== null) {
+            const imageFeaturedWidth = imageFeatured.offsetWidth;
+            const imageFeaturedHeight = imageFeatured.offsetHeight;
+            console.log(imageFeaturedHeight)
+            console.log(imageFeaturedWidth)
+            const selectDivWidth = selectDiv.offsetWidth;
+            const selectDivHeight = selectDiv.offsetHeight;
+            const totalHeight = selectDivHeight + targetBoxPosition.y + 33
+            const totalWidth = selectDivWidth + targetBoxPosition.x + 33
+            console.log(targetBoxPosition);
+            if (totalHeight > imageFeaturedHeight && totalWidth > imageFeaturedWidth) {
+                setSelectBoxOffset({top: -163, left: -408})
+            } else if (totalHeight > imageFeaturedHeight) {
+                setSelectBoxOffset({top: -163, left: 83})
+            }else if (totalWidth > imageFeaturedWidth) {
+                setSelectBoxOffset({top: 83, left: -408})
+            } else {
+                setSelectBoxOffset({top: 83, left: 83})
+            }
+        }
+    }, [targetBox])
+    
+    const selectBoxStyle = {
+        backgroundColor: 'white',
+	    opacity: '0.8',
+	    borderRadius: '10px',
+	    position: 'absolute',
+	    // top: `-163px`,
+	    // left: `83px`,
+	    // top: `-163px`,
+	    // left: `-408px`,
+	    top: `${selectBoxOffset.top}px`,
+	    left: `${selectBoxOffset.left}px`,
+	    overflow: 'hidden',
+    }
+    // setTargetBoxPosition
 
     return (
         <div className="divine-comedy">
@@ -407,7 +448,7 @@ const Gameboard = ({history}) => {
                     style={targetBoxStyle}
                     onClick={() => setTargetBox(prevTargetBox => !prevTargetBox)}
                 >                        
-                        <div className='select-character-box'>
+                        <div className='select-character-box' style={selectBoxStyle}>
                             {displayNames}
                         </div>
                 </div>
