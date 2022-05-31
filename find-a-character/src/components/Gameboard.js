@@ -383,21 +383,18 @@ const Gameboard = ({history}) => {
         if (selectDiv !== null) {
             const imageFeaturedWidth = imageFeatured.offsetWidth;
             const imageFeaturedHeight = imageFeatured.offsetHeight;
-            console.log(imageFeaturedHeight)
-            console.log(imageFeaturedWidth)
             const selectDivWidth = selectDiv.offsetWidth;
             const selectDivHeight = selectDiv.offsetHeight;
-            const totalHeight = selectDivHeight + targetBoxPosition.y + 33
-            const totalWidth = selectDivWidth + targetBoxPosition.x + 33
-            console.log(targetBoxPosition);
+            const totalHeight = selectDivHeight + targetBoxPosition.y + 40
+            const totalWidth = selectDivWidth + targetBoxPosition.x + 40
             if (totalHeight > imageFeaturedHeight && totalWidth > imageFeaturedWidth) {
-                setSelectBoxOffset({top: -163, left: -408})
+                setSelectBoxOffset({top: -selectDivHeight, left: -selectDivWidth})
             } else if (totalHeight > imageFeaturedHeight) {
-                setSelectBoxOffset({top: -163, left: 83})
+                setSelectBoxOffset({top: -selectDivHeight, left: 90})
             }else if (totalWidth > imageFeaturedWidth) {
-                setSelectBoxOffset({top: 83, left: -408})
+                setSelectBoxOffset({top: 90, left: -selectDivWidth})
             } else {
-                setSelectBoxOffset({top: 83, left: 83})
+                setSelectBoxOffset({top: 90, left: 90})
             }
         }
     }, [targetBox])
@@ -436,6 +433,7 @@ const Gameboard = ({history}) => {
                 handleStartGame={handleStartGame}
             />}
             <Header
+                handleStartGame={handleStartGame}
                 username={username}
                 leftToFind={leftToFind}
                 time={time}
@@ -444,13 +442,17 @@ const Gameboard = ({history}) => {
             {
                 targetBox &&
                 <div
-                    className="target-box"
-                    style={targetBoxStyle}
-                    onClick={() => setTargetBox(prevTargetBox => !prevTargetBox)}
-                >                        
-                        <div className='select-character-box' style={selectBoxStyle}>
-                            {displayNames}
-                        </div>
+                        className="target-box-wrapper"
+                        onClick={() => setTargetBox(prevTargetBox => !prevTargetBox)}
+                    >
+                    <div
+                        className="target-box"
+                        style={targetBoxStyle}
+                    >
+                            <div className='select-character-box' style={selectBoxStyle}>
+                                {displayNames}
+                            </div>
+                    </div>
                 </div>
             }
             <div className="gameboard-image-container" onClick={checkCharacters}>
