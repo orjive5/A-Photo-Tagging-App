@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/orjive5/A-Photo-Tagging-App.git/static/css/main.49298728.css",
+    "main.js": "/orjive5/A-Photo-Tagging-App.git/static/js/main.40c87448.js",
+    "index.html": "/orjive5/A-Photo-Tagging-App.git/index.html",
+    "main.49298728.css.map": "/orjive5/A-Photo-Tagging-App.git/static/css/main.49298728.css.map",
+    "main.40c87448.js.map": "/orjive5/A-Photo-Tagging-App.git/static/js/main.40c87448.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.49298728.css",
+    "static/js/main.40c87448.js"
+  ]
+}
