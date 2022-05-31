@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.css": "/orjive5/A-Photo-Tagging-App/static/css/main.49298728.css",
-    "main.js": "/orjive5/A-Photo-Tagging-App/static/js/main.0d65fa0d.js",
-    "index.html": "/orjive5/A-Photo-Tagging-App/index.html",
-    "main.49298728.css.map": "/orjive5/A-Photo-Tagging-App/static/css/main.49298728.css.map",
-    "main.0d65fa0d.js.map": "/orjive5/A-Photo-Tagging-App/static/js/main.0d65fa0d.js.map"
+    "main.css": "/A-Photo-Tagging-App/static/css/main.49298728.css",
+    "main.js": "/A-Photo-Tagging-App/static/js/main.0d65fa0d.js",
+    "index.html": "/A-Photo-Tagging-App/index.html",
+    "main.49298728.css.map": "/A-Photo-Tagging-App/static/css/main.49298728.css.map",
+    "main.0d65fa0d.js.map": "/A-Photo-Tagging-App/static/js/main.0d65fa0d.js.map"
   },
   "entrypoints": [
     "static/css/main.49298728.css",
